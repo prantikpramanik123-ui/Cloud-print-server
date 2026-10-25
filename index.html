@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Print - ফাইল আপলোড</title>
+    <title>Cloud Print - ক্লাউড প্রিন্ট</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
         h2 { color: #333; margin-bottom: 20px; }
         input[type="file"] { margin: 20px 0; width: 100%; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
         button:hover { background: #0056b3; }
-        #status { margin-top: 15px; font-weight: bold; color: green; }
+        #status { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -40,7 +40,7 @@
             statusText.textContent = 'আপলোড হচ্ছে...';
 
             try {
-                const response = await fetch('http://localhost:3000/upload', {
+                const response = await fetch('/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -48,17 +48,16 @@
                 const result = await response.json();
                 if (response.ok) {
                     statusText.style.color = 'green';
-                    statusText.textContent = 'সফল! ফাইলটি সার্ভারে পৌঁছে গেছে।';
+                    statusText.textContent = 'সাফল্য! ফাইলটি সার্ভারে পৌঁছে গেছে।';
                 } else {
                     statusText.style.color = 'red';
                     statusText.textContent = 'ত্রুটি: ' + result.message;
                 }
             } catch (err) {
                 statusText.style.color = 'red';
-                statusText.textContent = 'সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!';
+                statusText.textContent = 'সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!';
             }
         });
     </script>
-
 </body>
 </html>
