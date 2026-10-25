@@ -6,16 +6,19 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// uploads ফোল্ডার না থাকলে স্বয়ংক্রিয়ভাবে তৈরি হবে
+// আপলোড ফোল্ডার তৈরি নিশ্চিত করা
 const uploadDir = './uploads';
 if (!fs.existsSync(uploadDir)){
     fs.mkdirSync(uploadDir);
 }
 
-// Multer সেটআপ (ফাইল আপলোড করার জন্য)
+// মেমরিতে প্রিন্ট রিকোয়েস্টের তালিকা জমানোর জন্য (অথবা ফাইল হিসেবে)
+let printRequests = [];
+
+// Multer ফাইল স্টোরেজ সেটআপ
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, uploadDir); 
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname);
@@ -27,28 +30,46 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// টেস্ট রাউট
+// কাস্টমার হোমপেজ রুট
 app.get('/', (req, res) => {
-    res.json({ status: "success", message: "Cloud Print Server is running successfully!" });
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ফাইল আপলোড ও প্রিন্ট রিকোয়েস্ট রাউট
+// ফাইল আপলোড ও প্রিন্ট রিকোয়েস্ট গ্রহণ করার API
 app.post('/upload', upload.single('printFile'), (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ status: "error", message: "কোনো ফাইল আপলোড করা হয়নি!" });
+        return res.status(400).json({ status: "error", message: "কোনো ফাইল সিলেক্ট করা হয়নি!" });
     }
 
-    console.log("Received file:", req.file.originalname);
-    console.log("Print Type:", req.body.printType);
-    console.log("Copies:", req.body.copies);
+    const newRequest = {
+        id: Date.now(),
+        filename: req.file.originalname,
+        storedName: req.file.filename,
+        printType: req.body.printType === 'color' ? 'কালার প্রিন্ট' : 'ব্ল্যাক অ্যান্ড হোয়াইট',
+        copies: req.body.copies || 1,
+        time: new Date().toLocaleString()
+    };
+
+    printRequests.unshift(newRequest); // নতুন রিকোয়েস্ট উপরে যোগ হবে
 
     res.json({
         status: "success",
         message: "ফাইল সফলভাবে আপলোড হয়েছে!",
-        filename: req.file.filename
+        data: newRequest
     });
 });
 
+// দোকানদারের জন্য অ্যাডমিন প্যানেল API (সব রিকোয়েস্ট দেখার জন্য)
+app.get('/api/requests', (req, res) => {
+    res.json(printRequests);
+});
+
+// আপলোড করা ফাইল ডাউনলোড করার রাউট
+app.get('/download/:filename', (req, res) => {
+    const file = path.join(__dirname, 'uploads', req.params.filename);
+    res.download(file);
+});
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Cloud Print Server is running on port ${PORT}`);
 });
