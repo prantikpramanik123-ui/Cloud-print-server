@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Print Portal - ক্লাউড প্রিন্ট সার্ভিস</title>
+    <title>Cloud Print - শপ রেজিস্ট্রেশন ও পোর্টাল</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -12,21 +12,17 @@
         .header h1 { color: #1a73e8; font-size: 24px; margin-bottom: 8px; }
         .header p { color: #5f6368; font-size: 14px; }
         
-        .price-banner { background: #e8f0fe; color: #1a73e8; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; justify-content: space-around; }
-
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3c4043; font-size: 14px; }
-        
-        .file-upload-box { border: 2px dashed #dadce0; border-radius: 8px; padding: 20px; text-align: center; background: #f8f9fa; cursor: pointer; transition: 0.2s; }
-        .file-upload-box:hover { border-color: #1a73e8; background: #f1f3f4; }
-        input[type="file"] { width: 100%; font-size: 14px; }
-
-        select, input[type="number"] { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
-        select:focus, input[type="number"]:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
+        input { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
 
         .btn { background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; transition: 0.2s; }
         .btn:hover { background: #1557b0; }
 
+        .result-box { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 8px; display: none; word-break: break-all; }
+        .result-box h3 { color: #1a73e8; font-size: 16px; margin-bottom: 8px; }
+        .result-box a { color: #1557b0; font-weight: bold; text-decoration: none; }
         #status { margin-top: 15px; font-weight: 600; text-align: center; font-size: 14px; }
     </style>
 </head>
@@ -34,75 +30,65 @@
 
     <div class="card">
         <div class="header">
-            <h1>🖨️ ক্লাউড প্রিন্ট পোর্টাল</h1>
-            <p>আপনার ডকুমেন্ট আপلود করুন এবং সরাসরি প্রিন্ট পাঠান</p>
+            <h1>🏪 দোকানদার রেজিস্ট্রেশন</h1>
+            <p>আপনার দোকানের জন্য ইনস্ট্যান্ট ক্লাউড প্রিন্ট পোর্টাল তৈরি করুন</p>
         </div>
 
-        <div class="price-banner">
-            <span>B&W: ৫ টাকা/পেজ</span>
-            <span>Color: ১০ টাকা/পেজ</span>
-        </div>
-
-        <form id="uploadForm">
+        <form id="registerForm">
             <div class="form-group">
-                <label>ফাইল সিলেক্ট করুন (PDF, DOCX, JPG):</label>
-                <div class="file-upload-box">
-                    <input type="file" id="fileInput" name="printFile" accept=".pdf,.doc,.docx,.png,.jpg" required>
-                </div>
+                <label>দোকানের নাম:</label>
+                <input type="text" id="shopName" placeholder="যেমন: ভাই ভাই প্রিন্টার্স" required>
             </div>
 
             <div class="form-group">
-                <label>প্রিন্টের ধরণ:</label>
-                <select id="printType">
-                    <option value="bw">ব্লাক অ্যান্ড হোয়াইট (৫ টাকা)</option>
-                    <option value="color">কালার প্রিন্ট (১০ টাকা)</option>
-                </select>
+                <label>পাসওয়ার্ড (অ্যাডমিন প্যানেলের জন্য):</label>
+                <input type="password" id="password" placeholder="একটি গোপন পাসওয়ার্ড দিন" required>
             </div>
 
-            <div class="form-group">
-                <label>কপির সংখ্যা (Copies):</label>
-                <input type="number" id="copies" value="1" min="1" max="100">
-            </div>
-
-            <button type="submit" class="btn">প্রিন্ট রিকোয়েস্ট পাঠান</button>
+            <button type="submit" class="btn">রেজিস্টার করুন</button>
         </form>
+
+        <div id="resultBox" class="result-box">
+            <h3>🎉 সফল! আপনার শপ লিংক তৈরি হয়েছে:</h3>
+            <p>কাস্টমার লিংক: <a id="customerLink" href="#" target="_blank"></a></p>
+            <p style="margin-top: 10px;">অ্যাডমিন প্যানেল: <a id="adminLink" href="#" target="_blank">ড্যাশবোর্ডে যান</a></p>
+        </div>
 
         <p id="status"></p>
     </div>
 
     <script>
-        const form = document.getElementById('uploadForm');
+        const form = document.getElementById('registerForm');
         const statusText = document.getElementById('status');
+        const resultBox = document.getElementById('resultBox');
+        const customerLink = document.getElementById('customerLink');
+        const adminLink = document.getElementById('adminLink');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const fileInput = document.getElementById('fileInput');
-            const printType = document.getElementById('printType').value;
-            const copies = document.getElementById('copies').value;
-
-            if (fileInput.files.length === 0) {
-                alert('দয়া করে একটি ফাইল সিলেক্ট করুন!');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('printFile', fileInput.files[0]);
-            formData.append('printType', printType);
-            formData.append('copies', copies);
+            const shopName = document.getElementById('shopName').value;
+            const password = document.getElementById('password').value;
 
             statusText.style.color = '#1a73e8';
-            statusText.textContent = 'ফাইল আপলোড হচ্ছে, দয়া করে অপেক্ষা করুন...';
+            statusText.textContent = 'তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...';
 
             try {
-                const response = await fetch('/upload', {
+                const response =- await fetch('/api/register', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shopName, password })
                 });
 
                 const result = await response.json();
                 if (response.ok) {
-                    statusText.style.color = '#137333';
-                    statusText.textContent = '🎉 সফল! আপনার প্রিন্ট রিকোয়েস্ট চলে গেছে। দোকানদার প্রিন্ট করে দেবেন।';
+                    statusText.textContent = '';
+                    resultBox.style.display = 'block';
+                    
+                    const fullCustomerUrl = window.location.origin + `/shop.html?id=${result.shopId}`;
+                    customerLink.href = fullCustomerUrl;
+                    customerLink.textContent = fullCustomerUrl;
+
+                    adminLink.href = `/admin.html?id=${result.shopId}`;
                     form.reset();
                 } else {
                     statusText.style.color = '#c5221f';
