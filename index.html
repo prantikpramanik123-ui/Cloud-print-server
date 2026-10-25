@@ -3,55 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Print - শপ রেজিস্ট্রেশন ও পোর্টাল</title>
+    <title>Cloud Print - ইনস্ট্যান্ট শপ ক্রিয়েটর</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 480px; }
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { color: #1a73e8; font-size: 24px; margin-bottom: 8px; }
-        .header p { color: #5f6368; font-size: 14px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 480px; text-align: center; }
+        .header h1 { color: #00a884; font-size: 26px; margin-bottom: 8px; } /* WhatsApp Green Theme */
+        .header p { color: #5f6368; font-size: 14px; margin-bottom: 25px; }
         
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3c4043; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
-        input:focus { border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
+        input { width: 100%; padding: 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus { border-color: #00a884; box-shadow: 0 0 0 2px rgba(0, 168, 132, 0.2); }
 
-        .btn { background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; transition: 0.2s; }
-        .btn:hover { background: #1557b0; }
+        .btn { background: #00a884; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; transition: 0.2s; }
+        .btn:hover { background: #008f72; }
 
-        .result-box { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 8px; display: none; word-break: break-all; }
-        .result-box h3 { color: #1a73e8; font-size: 16px; margin-bottom: 8px; }
-        .result-box a { color: #1557b0; font-weight: bold; text-decoration: none; }
-        #status { margin-top: 15px; font-weight: 600; text-align: center; font-size: 14px; }
+        .result-box { margin-top: 20px; padding: 20px; background: #e6f8f2; border-radius: 12px; display: none; text-align: left; word-break: break-all; border: 1px solid #b3ebd7; }
+        .result-box h3 { color: #00a884; font-size: 16px; margin-bottom: 12px; }
+        .result-box p { font-size: 13px; color: #333; margin-bottom: 8px; }
+        .result-box a { color: #008f72; font-weight: bold; text-decoration: none; }
+        #status { margin-top: 15px; font-weight: 600; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <div class="header">
-            <h1>🏪 দোকানদার রেজিস্ট্রেশন</h1>
-            <p>আপনার দোকানের জন্য ইনস্ট্যান্ট ক্লাউড প্রিন্ট পোর্টাল তৈরি করুন</p>
+            <h1>💬 ইনস্ট্যান্ট ক্লাউড প্রিন্ট</h1>
+            <p>হোয়াটসঅ্যাপের মতো এক ক্লিকে আপনার দোকানের পোর্টাল চালু করুন</p>
         </div>
 
         <form id="registerForm">
             <div class="form-group">
-                <label>দোকানের নাম:</label>
-                <input type="text" id="shopName" placeholder="যেমন: ভাই ভাই প্রিন্টার্স" required>
+                <label>আপনার দোকানের নাম:</label>
+                <input type="text" id="shopName" placeholder="যেমন: মা তারা প্রিন্টার্স" required autocomplete="off">
             </div>
 
-            <div class="form-group">
-                <label>পাসওয়ার্ড (অ্যাডমিন প্যানেলের জন্য):</label>
-                <input type="password" id="password" placeholder="একটি গোপন পাসওয়ার্ড দিন" required>
-            </div>
-
-            <button type="submit" class="btn">রেজিস্টার করুন</button>
+            <button type="submit" class="btn">শুরু করুন (Get Started)</button>
         </form>
 
         <div id="resultBox" class="result-box">
-            <h3>🎉 সফল! আপনার শপ লিংক তৈরি হয়েছে:</h3>
-            <p>কাস্টমার লিংক: <a id="customerLink" href="#" target="_blank"></a></p>
-            <p style="margin-top: 10px;">অ্যাডমিন প্যানেল: <a id="adminLink" href="#" target="_blank">ড্যাশবোর্ডে যান</a></p>
+            <h3>🎉 অভিনন্দন! আপনার শপ রেডি:</h3>
+            <p><strong>কাস্টমার লিংক:</strong><br><a id="customerLink" href="#" target="_blank"></a></p>
+            <p style="margin-top: 12px;"><strong>আপনার অ্যাডমিন প্যানেল:</strong><br><a id="adminLink" href="#" target="_blank">ড্যাশবোর্ডে প্রবেশ করুন ➔</a></p>
         </div>
 
         <p id="status"></p>
@@ -67,21 +62,22 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const shopName = document.getElementById('shopName').value;
-            const password = document.getElementById('password').value;
 
-            statusText.style.color = '#1a73e8';
-            statusText.textContent = 'তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...';
+            statusText.style.color = '#00a884';
+            statusText.textContent = 'তৈরি হচ্ছে...';
 
             try {
-                const response =- await fetch('/api/register', {
+                // সার্ভারে পাসওয়ার্ড ছাড়া শুধু নাম দিয়েই শপ রেজিস্টার করার রিকোয়েস্ট পাঠানো হচ্ছে
+                const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ shopName, password })
+                    body: JSON.stringify({ shopName, password: 'nopassword' })
                 });
 
                 const result = await response.json();
                 if (response.ok) {
                     statusText.textContent = '';
+                    form.style.display = 'none';
                     resultBox.style.display = 'block';
                     
                     const fullCustomerUrl = window.location.origin + `/shop.html?id=${result.shopId}`;
@@ -89,7 +85,6 @@
                     customerLink.textContent = fullCustomerUrl;
 
                     adminLink.href = `/admin.html?id=${result.shopId}`;
-                    form.reset();
                 } else {
                     statusText.style.color = '#c5221f';
                     statusText.textContent = 'ত্রুটি: ' + result.message;
