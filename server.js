@@ -18,6 +18,7 @@ const upload = multer({ storage: storage });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname)); // স্ট্যাটিক ফাইল ও index.html দেখানোর জন্য
 
 // টেস্ট রাউট
 app.get('/', (req, res) => {
