@@ -1,32 +1,40 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Multer সেটআপ (ফাইল আপলোড করার জন্য)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads'); 
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
 
-// সার্ভার চালু আছে কিনা তা চেক করার রুট (Test Route)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// টেস্ট রাউট
 app.get('/', (req, res) => {
-    sendResponse = {
-        status: "success",
-        message: "Cloud Print Server is running successfully!"
-    };
-    res.json(sendResponse);
+    res.json({ status: "success", message: "Cloud Print Server is running successfully!" });
 });
 
-// প্রিন্ট রিকোয়েস্ট রিসিভ করার এন্ডপয়েন্ট
-app.post('/print', (req, res) => {
-    const printData = req.body;
-    console.log("Received print data:", printData);
-    
-    // এখানে প্রিন্ট লজিক বা ক্লায়েন্ট ডিভাইসে ডেটা পাঠানোর কোড থাকবে
-    
+// ফাইল আপলোড ও প্রিন্ট রিকোয়েস্ট রাউট
+app.post('/upload', upload.single('printFile'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ status: "error", message: "No file uploaded!" });
+    }
+
+    console.log("Received file:", req.file.originalname);
     res.json({
         status: "success",
-        message: "Print request received successfully!",
-        data: printData
+        message: "File uploaded and print request received successfully!",
+        filename: req.file.filename
     });
 });
 
