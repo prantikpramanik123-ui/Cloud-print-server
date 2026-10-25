@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>কাস্টমার প্রিন্ট পোর্টাল</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 480px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #1a73e8; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: #5f6368; font-size: 14px; }
+        
+        .price-banner { background: #e8f0fe; color: #1a73e8; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; margin-bottom: 20px; display: flex; justify-content: space-around; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #3c4043; font-size: 14px; }
+        
+        .file-upload-box { border: 2px dashed #dadce0; border-radius: 8px; padding: 20px; text-align: center; background: #f8f9fa; }
+        input[type="file"] { width: 100%; font-size: 14px; }
+
+        select, input[type="number"] { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; outline: none; }
+        .btn { background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; }
+        .btn:hover { background: #1557b0; }
+        #status { margin-top: 15px; font-weight: 600; text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <h1>🖨️ ক্লাউড প্রিন্ট পোর্টাল</h1>
+            <p>আপনার ডকুমেন্ট আপলোড করুন এবং সরাসরি প্রিন্ট পাঠান</p>
+        </div>
+
+        <div class="price-banner">
+            <span>B&W: ৫ টাকা/পেজ</span>
+            <span>Color: ১০ টাকা/পেজ</span>
+        </div>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>ফাইল সিলেক্ট করুন (PDF, DOCX, JPG):</label>
+                <div class="file-upload-box">
+                    <input type="file" id="fileInput" name="printFile" accept=".pdf,.doc,.docx,.png,.jpg" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>প্রিন্টের ধরণ:</label>
+                <select id="printType">
+                    <option value="bw">ব্লাক অ্যান্ড হোয়াইট (৫ টাকা)</option>
+                    <option value="color">কালার প্রিন্ট (১০ টাকা)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>কপির সংখ্যা (Copies):</label>
+                <input type="number" id="copies" value="1" min="1" max="100">
+            </div>
+
+            <button type="submit" class="btn">প্রিন্ট রিকোয়েস্ট পাঠান</button>
+        </form>
+
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const shopId = urlParams.get('id');
+
+        const form = document.getElementById('uploadForm');
+        const statusText = document.getElementById('status');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const printType = document.getElementById('printType').value;
+            const copies = document.getElementById('copies').value;
+
+            if (!shopId) {
+                alert('অবৈধ শপ লিংক!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('printFile', fileInput.files[0]);
+            formData.append('printType', printType);
+            formData.append('copies', copies);
+
+            statusText.style.color = '#1a73e8';
+            statusText.textContent = 'ফাইল আপলোড হচ্ছে...';
+
+            try {
+                const response = await fetch(`/api/upload/${shopId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    statusText.style.color = '#137333';
+                    statusText.textContent = '🎉 সফল! ফাইলটি প্রিন্টের জন্য চলে গেছে।';
+                    form.reset();
+                } else {
+                    statusText.style.color = '#c5221f';
+                    statusText.textContent = 'ত্রুটি: ' + result.message;
+                }
+            } catch (err) {
+                statusText.style.color = '#c5221f';
+                statusText.textContent = 'সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!';
+            }
+        });
+    </script>
+</body>
+</html>
