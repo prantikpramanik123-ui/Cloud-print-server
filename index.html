@@ -3,26 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Print - ক্লাউড প্রিন্ট</title>
+    <title>Cloud Print - রিমোট ক্লাউড প্রিন্টিং সার্ভিস</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #333; margin-bottom: 20px; }
-        input[type="file"] { margin: 20px 0; width: 100%; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
-        button:hover { background: #0056b3; }
-        #status { margin-top: 15px; font-weight: bold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 480px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #333; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: #666; font-size: 14px; }
+        
+        .price-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 14px; color: #444; }
+        .price-box span { font-weight: bold; color: #2d3748; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px; }
+        
+        .file-drop-area { border: 2px dashed #cbd5e0; border-radius: 8px; padding: 20px; text-align: center; background: #fafafa; cursor: pointer; transition: 0.3s; }
+        .file-drop-area:hover { border-color: #667eea; background: #f0f4ff; }
+        input[type="file"] { width: 100%; padding: 10px; font-size: 14px; }
+
+        select, input[type="number"] { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
+        select:focus, input[type="number"]:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+
+        .btn-submit { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; transition: 0.3s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #status { margin-top: 15px; font-weight: 600; text-align: center; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>প্রিন্ট করার জন্য ফাইল দিন</h2>
+    <div class="container">
+        <div class="header">
+            <h1>🖨️ ক্লাউড প্রিন্ট পোর্টাল</h1>
+            <p>আপনার ফাইল আপলোড করুন এবং সরাসরি প্রিন্ট পাঠান!</p>
+        </div>
+
+        <!-- রেট চার্ট -->
+        <div class="price-box">
+            <div>ব্ল্যাক অ্যান্ড হোয়াইট: <span>৫ টাকা/পেজ</span></div>
+            <div>কালার প্রিন্ট: <span>১০ টাকা/পেজ</span></div>
+        </div>
+
         <form id="uploadForm">
-            <input type="file" id="fileInput" name="printFile" accept=".pdf,.doc,.docx,.png,.jpg" required>
-            <br>
-            <button type="submit">ফাইল আপলোড করুন</button>
+            <!-- ফাইল আপলোড বক্স -->
+            <div class="form-group">
+                <label for="fileInput">ফাইল সিলেক্ট করুন (PDF, DOCX, JPG):</label>
+                <div class="file-drop-area">
+                    <input type="file" id="fileInput" name="printFile" accept=".pdf,.doc,.docx,.png,.jpg" required>
+                </div>
+            </div>
+
+            <!-- প্রিন্ট টাইপ সিলেক্ট -->
+            <div class="form-group">
+                <label for="printType">প্রিন্টের ধরণ:</label>
+                <select id="printType">
+                    <option value="bw">ব্লাক অ্যান্ড হোয়াইট (৫ টাকা)</option>
+                    <option value="color">কালার প্রিন্ট (১০ টাকা)</option>
+                </select>
+            </div>
+
+            <!-- কপির সংখ্যা -->
+            <div class="form-group">
+                <label for="copies">কপির সংখ্যা (Copies):</label>
+                <input type="number" id="copies" value="1" min="1" max="100">
+            </div>
+
+            <button type="submit" class="btn-submit">প্রিন্ট রিকোয়েস্ট পাঠান</button>
         </form>
+
         <p id="status"></p>
     </div>
 
@@ -33,11 +82,21 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fileInput = document.getElementById('fileInput');
+            const printType = document.getElementById('printType').value;
+            const copies = document.getElementById('copies').value;
+
+            if (fileInput.files.length === 0) {
+                alert('অনুগ্রহ করে একটি ফাইল সিলেক্ট করুন!');
+                return;
+            }
+
             const formData = new FormData();
             formData.append('printFile', fileInput.files[0]);
+            formData.append('printType', printType);
+            formData.append('copies', copies);
 
-            statusText.style.color = '#007bff';
-            statusText.textContent = 'আপলোড হচ্ছে...';
+            statusText.style.color = '#667eea';
+            statusText.textContent = 'ফাইল আপলোড হচ্ছে, দয়া করে অপেক্ষা করুন...';
 
             try {
                 const response = await fetch('/upload', {
@@ -47,14 +106,15 @@
 
                 const result = await response.json();
                 if (response.ok) {
-                    statusText.style.color = 'green';
-                    statusText.textContent = 'সাফল্য! ফাইলটি সার্ভারে পৌঁছে গেছে।';
+                    statusText.style.color = '#27ae60';
+                    statusText.textContent = '🎉 সফল! আপনার প্রিন্ট রিকোয়েস্ট জমা হয়েছে। দোকানদারের সাথে যোগাযোগ করুন।';
+                    form.reset();
                 } else {
-                    statusText.style.color = 'red';
+                    statusText.style.color = '#e74c3c';
                     statusText.textContent = 'ত্রুটি: ' + result.message;
                 }
             } catch (err) {
-                statusText.style.color = 'red';
+                statusText.style.color = '#e74c3c';
                 statusText.textContent = 'সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!';
             }
         });
