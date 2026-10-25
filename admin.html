@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>দোকানদার অ্যাডমিন ড্যাশবোর্ড</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f2f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1 { color: #1a73e8; margin-bottom: 20px; font-size: 22px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
+        th { background: #e8f0fe; color: #1a73e8; }
+        .btn-download { background: #137333; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .btn-download:hover { background: #0d5023; }
+        .no-data { text-align: center; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📊 প্রিন্ট অর্ডার ড্যাশবোর্ড</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>সময়</th>
+                    <th>ফাইলের নাম</th>
+                    <th>প্রিন্ট টাইপ</th>
+                    <th>কপি</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody id="requestTable">
+                <!-- রিকোয়েস্টগুলো এখানে লোড হবে -->
+            </tbody>
+        </table>
+        <p id="noData" class="no-data">কোনো নতুন প্রিন্ট রিকোয়েস্ট নেই।</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const shopId = urlParams.get('id');
+
+        async function fetchRequests() {
+            if (!shopId) return;
+            try {
+                const response = await fetch(`/api/requests/${shopId}`);
+                const requests = await response.json();
+                
+                const tableBody = document.getElementById('requestTable');
+                const noData = document.getElementById('noData');
+                tableBody.innerHTML = '';
+
+                if (requests.length > 0) {
+                    noData.style.display = 'none';
+                    requests.forEach(req => {
+                        const row = `<tr>
+                            <td>${req.time}</td>
+                            <td>${req.filename}</td>
+                            <td>${req.printType}</td>
+                            <td>${req.copies} কপি</td>
+                            <td><a href="/download/${req.storedName}" class="btn-download" target="_blank">ডাউনলোড</a></td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    noData.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Error fetching requests:', err);
+            }
+        }
+
+        fetchRequests();
+        setInterval(fetchRequests, 5000);
+    </script>
+</body>
+</html>
